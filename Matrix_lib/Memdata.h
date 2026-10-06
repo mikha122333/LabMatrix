@@ -12,7 +12,7 @@ class MemData {
 	size_t _size;
 	size_t _capacity;
 
-	void shrink_to_fit( size_t start_index = 0);
+	void shrink_to_fit( size_t start_index = 0)noexcept;
 public:
 	MemData(size_t size = 0);                
 	MemData(std::initializer_list<vec_type>);
@@ -161,7 +161,7 @@ MemData<vec_type>& MemData<vec_type>::operator=(MemData&& m1) noexcept {
 	return(*this);
 }
 template<typename vec_type>
-void MemData<vec_type>::shrink_to_fit(size_t start_index) {
+void MemData<vec_type>::shrink_to_fit(size_t start_index)noexcept {
 	(*this).reset_memory(_size, start_index);
 	size_t old_capacity = _capacity;
 	_capacity = _size;
