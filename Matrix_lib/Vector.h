@@ -9,12 +9,13 @@ class Vector {
 	size_t _back;         // индекс последнего элемента
 	size_t i_to_ri(size_t) const;
 public:
-	Vector(size_t size = 0);                 // конструктор по размеру + по умолчанию
+	//Vector(size_t size = 0);                 // конструктор по размеру + по умолчанию
 	Vector(std::initializer_list<vec_type>);   // конструктор по списку инициализации
-	Vector(vec_type*, size_t);                 // конструктор инициализации
+	Vector(size_t size=0, const vec_type* data=nullptr);
+	//Vector(vec_type*, size_t);                 // конструктор инициализации
 	Vector(const Vector<vec_type>&);                   // конструктор копирования
 	Vector(Vector<vec_type>&&);                        // конструктор с move-семантикой
-	~Vector() = default;                     // деструктор
+	virtual ~Vector() = default;                     // деструктор
 
 	inline bool is_empty() const noexcept;          // проверка на пустоту
 	inline bool is_full() const noexcept;           // проверка на переполнение
@@ -107,16 +108,16 @@ template<typename vec_type>
 size_t Vector<vec_type>::i_to_ri(size_t i) const {
 	return ((i + _front) % _mem._capacity);
 }
-template<typename vec_type>
-Vector<vec_type>::Vector(size_t size) {
-	MemData<vec_type> tmp(size);
-	_mem = std::move(tmp);
-	_front = 0;
-	if (size > 0)
-		_back = size - 1;
-	else
-		_back = 0;
-}
+//template<typename vec_type>
+//Vector<vec_type>::Vector(size_t size) {
+//	MemData<vec_type> tmp(size);
+//	_mem = std::move(tmp);
+//	_front = 0;
+//	if (size > 0)
+//		_back = size - 1;
+//	else
+//		_back = 0;
+//}
 template<typename vec_type>
 Vector<vec_type>::Vector(std::initializer_list<vec_type> li) {
 	MemData<vec_type> tmp(li);
@@ -128,15 +129,30 @@ Vector<vec_type>::Vector(std::initializer_list<vec_type> li) {
 		_back = 0;
 }
 template<typename vec_type>
-Vector<vec_type>::Vector(vec_type* li, size_t size) {
-	MemData<vec_type> tmp(li, size);
-	_mem = (std::move(tmp));
+Vector<vec_type>::Vector(size_t size, const vec_type* data) {
+	if (data != nullptr) {
+		MemData<vec_type> tmp(size, data);
+		_mem = (std::move(tmp));
+	}
+	else {
+		MemData<vec_type> tmp(size);
+		_mem = (std::move(tmp));
+	}
 	_front = 0;
 	if (_mem._size > 0)
 		_back = _mem._size - 1;
 	else
 		_back = 0;
 }
+//Vector<vec_type>::Vector(vec_type* li, size_t size) {
+//	MemData<vec_type> tmp(li, size);
+//	_mem = (std::move(tmp));
+//	_front = 0;
+//	if (_mem._size > 0)
+//		_back = _mem._size - 1;
+//	else
+//		_back = 0;
+//}
 template<typename vec_type>
 Vector<vec_type>::Vector(const Vector<vec_type>& v1) {
 	_mem = v1._mem;
@@ -165,18 +181,22 @@ Vector<vec_type>::Vector(Vector<vec_type>&& v1) {
 //}
 template<typename vec_type>
 Vector<vec_type>& Vector<vec_type>::operator=(const Vector<vec_type>& v1) noexcept {
-	_mem = v1._mem;
-	_front = v1._front;
-	_back = v1._back;
+	if (this != &v1) {
+		_mem = v1._mem;
+		_front = v1._front;
+		_back = v1._back;
+	}
 	return(*this);
 }
 template<typename vec_type>
 Vector<vec_type>& Vector<vec_type>::operator=(Vector<vec_type>&& v1) noexcept {
-	_mem = std::move(v1._mem);
-	_front = v1._front;
-	v1._front = 0;
-	_back = v1._back;
-	v1._back = 0;
+	if (this != &v1) {
+		_mem = std::move(v1._mem);
+		_front = v1._front;
+		v1._front = 0;
+		_back = v1._back;
+		v1._back = 0;
+	}
 	return(*this);
 }
 //template<typename vec_type>

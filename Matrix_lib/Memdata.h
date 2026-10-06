@@ -14,9 +14,10 @@ class MemData {
 
 	void shrink_to_fit( size_t start_index = 0)noexcept;
 public:
-	MemData(size_t size = 0);                
+	//MemData(size_t size = 0);
+	MemData(size_t size = 0, const vec_type* data=nullptr);
 	MemData(std::initializer_list<vec_type>);
-	MemData(vec_type*, size_t);              
+	//MemData(vec_type*, size_t);              
 	MemData(const MemData&);                 
 	MemData(MemData&&);                      
 	~MemData();                              
@@ -55,15 +56,15 @@ template<typename vec_type>
 inline size_t MemData<vec_type>::capacity() const noexcept { return _capacity; }
 template<typename vec_type>
 inline const vec_type* const MemData<vec_type>::data() const noexcept { return _data; }
-template<typename vec_type>
-MemData<vec_type>::MemData(size_t size) {
-	_size = size;
-	_capacity = size + MEM_STEP - 1;
-	_data = new vec_type[_capacity];
-	for (int i = 0; i < _capacity; i++) {
-		_data[i] = 0;
-	}
-}
+//template<typename vec_type>
+//MemData<vec_type>::MemData(size_t size) {
+//	_size = size;
+//	_capacity = size + MEM_STEP - 1;
+//	_data = new vec_type[_capacity];
+//	for (int i = 0; i < _capacity; i++) {
+//		_data[i] = 0;
+//	}
+//}
 template<typename vec_type>
 MemData<vec_type>::MemData(std::initializer_list<vec_type> data) {
 	_size = data.size();
@@ -76,14 +77,30 @@ MemData<vec_type>::MemData(std::initializer_list<vec_type> data) {
 	}
 }
 template<typename vec_type>
-MemData<vec_type>::MemData(vec_type* data, size_t size) {
+MemData<vec_type>::MemData(size_t size, const vec_type* data) {
 	_size = size;
-	_capacity = _size + MEM_STEP - 1;
+	_capacity = size + MEM_STEP - 1;
 	_data = new vec_type[_capacity];
-	for (int i = 0; i < _size; i++) {
-		_data[i] = data[i];
+	if (data != nullptr) {
+		for (int i = 0; i < _size; i++) {
+			_data[i] = data[i];
+		}
+	}
+	else {
+		for (int i = 0; i < _size; i++) {
+			_data[i] = vec_type();
+		}
 	}
 }
+//template<typename vec_type>
+//MemData<vec_type>::MemData(vec_type* data, size_t size) {
+//	_size = size;
+//	_capacity = _size + MEM_STEP - 1;
+//	_data = new vec_type[_capacity];
+//	for (int i = 0; i < _size; i++) {
+//		_data[i] = data[i];
+//	}
+//}
 template<typename vec_type>
 MemData<vec_type>::MemData(const MemData& m1) {
 	this->_size = m1._size;
