@@ -1,3 +1,4 @@
 #pragma once
 //#define MEMDATA_TESTS
 //#define VECTOR_TESTS
+//#define VECTOR_CAPACITY_TEST

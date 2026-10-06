@@ -592,3 +592,51 @@ TEST(ClassVector, can_shake) {
     }
 }
 #endif
+#ifdef VECTOR_CAPACITY_TEST
+#include "Vector.h"
+TEST(vec_cap, is_size_equal_capacity) {
+    Vector<int> v1({ 1,2,3 });
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 3);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_EQ(v1[i], i + 1);
+    }
+}
+TEST(vec_cap, is_size_equal_capacity_after_add) {
+    Vector<int> v1({ 1,2 });
+    v1.push_back(3);
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 3);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_EQ(v1[i], i + 1);
+    }
+}
+TEST(vec_cap, is_size_equal_capacity_after_pop) {
+    Vector<int> v1({ 1,2,3,4 });
+    v1.pop_back();
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 3);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_EQ(v1[i], i + 1);
+    }
+}
+TEST(vec_cap, is_size_equal_capacity_after_using_circle_container) {
+    Vector<int> v1({ 1});
+    for (int i = 0; i < 5; i++) {
+        v1.push_back(i + 2);
+        v1.pop_front();
+    }
+    for (int i = 0; i < 13;i++) {
+        v1.push_back(7 + i);
+    }
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 14);
+    for (int i = 0; i < 14; i++) {
+        EXPECT_EQ(v1[i], i + 6);
+    }
+}
+#endif

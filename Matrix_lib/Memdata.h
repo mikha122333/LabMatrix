@@ -1,26 +1,28 @@
 #pragma once
 #include <initializer_list>
 
-#define MEM_STEP 15//проблема с = и >><< они есть векторе и тут
+#define MEM_STEP 15
 
 template<typename vec_type>
 class Vector;
 
 template<typename vec_type>
 class MemData {
-	vec_type* _data;             // хранилище данных
-	size_t _size;              // размер заполненной части хранилища
-	size_t _capacity;          // вместимость хранилища
-public:
-	MemData(size_t size = 0);                // конструктор по размеру + по умолчанию
-	MemData(std::initializer_list<vec_type>);  // конструктор по списку инициализации
-	MemData(vec_type*, size_t);                // конструктор инициализации
-	MemData(const MemData&);                 // конструктор копирования
-	MemData(MemData&&);                      // конструктор с move-семантикой
-	~MemData();                              // деструктор
+	vec_type* _data;             // data storage
+	size_t _size;
+	size_t _capacity;
 
-	inline bool is_empty() const noexcept;   // проверка на пустоту
-	inline bool is_full() const noexcept;    // проверка на переполнение
+	void shrink_to_fit( size_t start_index = 0);
+public:
+	MemData(size_t size = 0);                
+	MemData(std::initializer_list<vec_type>);
+	MemData(vec_type*, size_t);              
+	MemData(const MemData&);                 
+	MemData(MemData&&);                      
+	~MemData();                              
+
+	inline bool is_empty() const noexcept;   
+	inline bool is_full() const noexcept;    
 
 	inline size_t size() const noexcept;                 // геттер размера
 	inline size_t capacity() const noexcept;             // геттер вместимости
@@ -157,4 +159,16 @@ MemData<vec_type>& MemData<vec_type>::operator=(MemData&& m1) noexcept {
 		m1._capacity = 0;
 	}
 	return(*this);
+}
+template<typename vec_type>
+void MemData<vec_type>::shrink_to_fit(size_t start_index) {
+	(*this).reset_memory(_size, start_index);
+	size_t old_capacity = _capacity;
+	_capacity = _size;
+	vec_type* tmp = new vec_type[_capacity];
+	for (int i = 0; i < _size; i++) {
+		tmp[i] = _data[i];
+	}
+	delete[]_data;
+	_data = tmp;
 }

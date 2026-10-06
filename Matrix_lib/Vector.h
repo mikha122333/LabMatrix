@@ -67,6 +67,8 @@ public:
 	};          // ввод
 	friend void shake(Vector<vec_type>&);
 	friend void sort_g(Vector<vec_type>&);
+
+	void shrink_to_fit();
 };
 template<typename vec_type>
 inline bool Vector<vec_type>::is_empty() const noexcept { return _mem.is_empty(); }
@@ -367,4 +369,10 @@ void sort_g(Vector<vec_type>& v1) {
 		v1[i] = v1[max_i];
 		v1[max_i] = tmp;
 	}
+}
+template<typename vec_type>
+void Vector<vec_type>::shrink_to_fit() {
+	this->_mem.shrink_to_fit(_front);
+	_front = 0;
+	_back = _mem._size - 1;
 }
