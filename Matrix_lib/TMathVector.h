@@ -4,9 +4,9 @@ template<typename vec_type>
 class MathVector :protected Vector<vec_type> {
 	size_t _start_index;
 public:
-	MathVector(size_t size = 0, const vec_type* data = nullptr) :Vector<vec_type>(size, data) { this->shrink_to_fit(); }
-	MathVector(std::initializer_list<vec_type> data) :Vector<vec_type>(data) { this->shrink_to_fit(); }
-	MathVector(const MathVector<vec_type>& other) : Vector<vec_type>(other) {_start_index = other._start_index; this->shrink_to_fit();}
+	MathVector(size_t size = 0, const vec_type* data = nullptr,size_t index=0) :Vector<vec_type>(size, data) { this->shrink_to_fit(); _start_index=index}
+	MathVector(std::initializer_list<vec_type> data, size_t index = 0) :Vector<vec_type>(data) { this->shrink_to_fit(); _start_index = index}
+	MathVector(const MathVector<vec_type>& other, size_t index = 0) : Vector<vec_type>(other) {_start_index = other._start_index; this->shrink_to_fit();}
 
 	MathVector<vec_type>& operator =(const MathVector<vec_type>& other)noexcept;
 	MathVector<vec_type>& operator =(MathVector<vec_type>&& other)noexcept;
@@ -20,7 +20,9 @@ public:
 	vec_type operator[](size_t num)const noexcept { return Vector<vec_type>::operator[](num); }
 	vec_type& operator[](size_t num)noexcept { return Vector<vec_type>::operator[](num); }
 
+
 	size_t size()const noexcept { return Vector<vec_type>::size(); }
+	size_t index()const noexcept { return _start_index; }
 
 	virtual ~MathVector() = default;
 

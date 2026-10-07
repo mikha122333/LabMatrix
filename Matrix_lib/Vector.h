@@ -130,14 +130,8 @@ Vector<vec_type>::Vector(std::initializer_list<vec_type> li) {
 }
 template<typename vec_type>
 Vector<vec_type>::Vector(size_t size, const vec_type* data) {
-	if (data != nullptr) {
-		MemData<vec_type> tmp(size, data);
-		_mem = (std::move(tmp));
-	}
-	else {
-		MemData<vec_type> tmp(size);
-		_mem = (std::move(tmp));
-	}
+	MemData<vec_type> tmp(size, data);
+	_mem = (std::move(tmp));
 	_front = 0;
 	if (_mem._size > 0)
 		_back = _mem._size - 1;
@@ -215,12 +209,13 @@ void Vector<vec_type>::push_front(vec_type ch) noexcept {
 	this->_mem._size++;
 	if (this->_mem._size > 1)
 		this->_front = (_front - 1 + _mem._capacity) % _mem._capacity;
-	_mem._data[_front] = ch;
+	//_mem._data[_front] = ch;
 	if ((*this).is_full()) {
 		_mem.reset_memory(_mem._size);
 		_front = 0;
 		_back = _mem._size - 1;
 	}
+	_mem._data[_front] = ch;
 }
 template<typename vec_type>
 void Vector<vec_type>::push_front_some(vec_type* ch, size_t size) noexcept {
@@ -249,12 +244,13 @@ void Vector<vec_type>::push_back(vec_type ch) noexcept {
 	this->_mem._size++;
 	if (this->_mem._size > 1)
 		this->_back = (_back + 1) % _mem._capacity;
-	_mem._data[_back] = ch;
+	//_mem._data[_back] = ch;
 	if ((*this).is_full()) {
 		_mem.reset_memory(_mem._size);
 		_front = 0;
 		_back = _mem._size - 1;
 	}
+	_mem._data[_back] = ch;
 }
 template<typename vec_type>
 void Vector<vec_type>::push_back_some(vec_type* ch, size_t size) noexcept {
