@@ -3,4 +3,4 @@
 //#define VECTOR_TESTS
 //#define VECTOR_CAPACITY_TEST
 //#define MATHVECTOR_TESTS
-#define MATRIX_TEST
+//#define MATRIX_TEST
