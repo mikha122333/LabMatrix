@@ -121,7 +121,8 @@ MemData<vec_type>::MemData(MemData&& m1) {
 }
 template<typename vec_type>
 MemData<vec_type>::~MemData() {
-	delete[]_data;
+	if(_data!=nullptr)
+		delete[]_data;
 }
 template<typename vec_type>
 void MemData<vec_type>::set_memory(size_t size) noexcept {
