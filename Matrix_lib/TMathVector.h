@@ -4,8 +4,8 @@ template<typename vec_type>
 class MathVector :protected Vector<vec_type> {
 	size_t _start_index;
 public:
-	MathVector(size_t size = 0, const vec_type* data = nullptr,size_t index=0) :Vector<vec_type>(size, data) { this->shrink_to_fit(); _start_index=index}
-	MathVector(std::initializer_list<vec_type> data, size_t index = 0) :Vector<vec_type>(data) { this->shrink_to_fit(); _start_index = index}
+	MathVector(size_t size = 0, const vec_type* data = nullptr, size_t index = 0) :Vector<vec_type>(size, data) { this->shrink_to_fit(); _start_index = index; }
+	MathVector(std::initializer_list<vec_type> data, size_t index = 0) :Vector<vec_type>(data) { this->shrink_to_fit(); _start_index = index; }
 	MathVector(const MathVector<vec_type>& other, size_t index = 0) : Vector<vec_type>(other) {_start_index = other._start_index; this->shrink_to_fit();}
 
 	MathVector<vec_type>& operator =(const MathVector<vec_type>& other)noexcept;

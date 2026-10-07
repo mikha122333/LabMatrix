@@ -8,7 +8,8 @@ class Matrix :public MathVector<MathVector<vec_type>> {
 public:
 	Matrix() :MathVector<MathVector<vec_type>>() { _N = 0; _M = 0; }
 	Matrix(size_t N, size_t M,vec_type** data=nullptr);
-	Matrix(std::initializer_list<std::initializer_list<vec_type>> data) :MathVector<MathVector<vec_type>>(data) { _N = data.size(); _M = data.begin()->size(); }
+	//Matrix(std::initializer_list<std::initializer_list<vec_type>> data) :MathVector<MathVector<vec_type>>(data) { _N = data.size(); _M = data.begin()->size(); }
+	Matrix(std::initializer_list<std::initializer_list<vec_type>> data);
 	Matrix(const Matrix& other) :MathVector<MathVector<vec_type>>(other) { _N = other._N; _M = other._M; }
 
 	~Matrix() = default;
@@ -33,6 +34,20 @@ public:
 		return(out);
 	}
 };
+template<typename vec_type>
+Matrix<vec_type>::Matrix(std::initializer_list<std::initializer_list<vec_type>> data):MathVector<MathVector<vec_type>>(data.size()) {
+	_N = data.size();
+	if (_N <= 0)
+		throw std::logic_error("0 list N");
+	_M = data.begin()->size();
+	if (_M <= 0)
+		throw std::logic_error("o list M");
+	auto it = data.begin();
+	for (int i = 0; i < _N;i++) {
+		MathVector<vec_type> tmp(*	(it+i));
+		(*this)[i] = std::move(tmp);
+	}
+}
 template<typename vec_type>
 Matrix<vec_type>::Matrix(size_t N, size_t M, vec_type** data):MathVector<MathVector<vec_type>>(N) {
 	if (N == 0 || M == 0)
