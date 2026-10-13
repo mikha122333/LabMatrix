@@ -42,8 +42,8 @@ public:
 	Vector<vec_type>& operator=(const Vector<vec_type>&) noexcept;      // оператор присваивания
 	Vector<vec_type>& operator=(Vector<vec_type>&&) noexcept;           // оператор присваивания с move-семантикой
 
-	vec_type operator[](size_t) const noexcept;       // оператор обращения по индексу константный
-	vec_type& operator[](size_t) noexcept;            // оператор обращения по индексу
+	vec_type operator[](size_t) const;       // оператор обращения по индексу константный
+	vec_type& operator[](size_t) ;            // оператор обращения по индексу
 
 	friend std::ostream& operator<< (std::ostream& out, const Vector<vec_type>& v1) {
 		out << "{ ";

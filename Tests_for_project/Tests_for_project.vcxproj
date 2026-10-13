@@ -109,6 +109,7 @@
     </ClCompile>
     <ClCompile Include="Test_MathVector.cpp" />
     <ClCompile Include="Test_Matrix.cpp" />
+    <ClCompile Include="Test_TriangleMatrix.cpp" />
     <ClCompile Include="Test_Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
