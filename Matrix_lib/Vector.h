@@ -275,13 +275,13 @@ void Vector<vec_type>::pop_back() {
 	}
 }
 template<typename vec_type>
-vec_type Vector<vec_type>::operator[](size_t i) const noexcept {
+vec_type Vector<vec_type>::operator[](size_t i) const  {
 	if (i < this->_mem._size)
 		return this->_mem._data[(*this).i_to_ri(i)];
 	else throw std::logic_error("i go out of range");
 }
 template<typename vec_type>
-vec_type& Vector<vec_type>::operator[](size_t i) noexcept {
+vec_type& Vector<vec_type>::operator[](size_t i)  {
 	if (i < this->_mem._size)
 		return this->_mem._data[(*this).i_to_ri(i)];
 	else throw std::logic_error("i go out of range");

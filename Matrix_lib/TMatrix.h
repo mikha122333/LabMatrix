@@ -2,24 +2,23 @@
 #include"TMathVector.h"
 template<typename vec_type>
 class Matrix :public MathVector<MathVector<vec_type>> {
+protected:
 	size_t _N;//lines
 	size_t _M;//pillars
 	Matrix<vec_type> Transposition()const noexcept;
 public:
 	Matrix() :MathVector<MathVector<vec_type>>() { _N = 0; _M = 0; }
 	Matrix(size_t N, size_t M,vec_type** data=nullptr);
-	//Matrix(std::initializer_list<std::initializer_list<vec_type>> data) :MathVector<MathVector<vec_type>>(data) { _N = data.size(); _M = data.begin()->size(); }
 	Matrix(std::initializer_list<std::initializer_list<vec_type>> data);
 	Matrix(const Matrix& other) :MathVector<MathVector<vec_type>>(other) { _N = other._N; _M = other._M; }
 
 	~Matrix() = default;
 
-	//inline size_t size()const noexcept = delete;
 	inline size_t get_N() const noexcept{ return _N; }
 	inline size_t get_M() const noexcept{ return _M; }
 
-	Matrix<vec_type>& operator=(const Matrix<vec_type>& other) { MathVector<MathVector<vec_type>>::operator =(other); _N = other._N; _M = other._M; return(*this); }
-	Matrix<vec_type>& operator=(Matrix<vec_type>&& other) { MathVector<MathVector<vec_type>>::operator =(std::move(other)); _N = other._N; _M = other._M; other._M = 0; other._N = 0; return(*this); }
+	Matrix<vec_type>& operator=(const Matrix<vec_type>& other)noexcept { MathVector<MathVector<vec_type>>::operator =(other); _N = other._N; _M = other._M; return(*this); }
+	Matrix<vec_type>& operator=(Matrix<vec_type>&& other)noexcept { MathVector<MathVector<vec_type>>::operator =(std::move(other)); _N = other._N; _M = other._M; other._M = 0; other._N = 0; return(*this); }
 	Matrix<vec_type>& operator*=(const Matrix<vec_type>& other);
 	Matrix<vec_type> operator *(const Matrix<vec_type>& other)const { Matrix tmp((*this)); return(tmp *= other); }
 

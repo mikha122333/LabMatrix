@@ -17,8 +17,8 @@ public:
 	MathVector<vec_type> operator -(const MathVector<vec_type>& other)const;
 	vec_type operator *(const MathVector<vec_type>& other)const;
 	MathVector<vec_type> operator *(double val)const;
-	vec_type operator[](size_t num)const noexcept { return Vector<vec_type>::operator[](num); }
-	vec_type& operator[](size_t num)noexcept { return Vector<vec_type>::operator[](num); }
+	vec_type operator[](size_t num)const { return Vector<vec_type>::operator[](num); }
+	vec_type& operator[](size_t num) { return Vector<vec_type>::operator[](num); }
 
 
 	size_t size()const noexcept { return Vector<vec_type>::size(); }
