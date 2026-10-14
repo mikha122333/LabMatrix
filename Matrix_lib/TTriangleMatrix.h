@@ -12,12 +12,16 @@ public:
 	TriangleMatrix(std::initializer_list<std::initializer_list<vec_type>> data);
 	TriangleMatrix(const TriangleMatrix& other) :MathVector<MathVector<vec_type>>(other) { _N = other._N; };
 
+	TriangleMatrix(const MathVector<MathVector<vec_type>>& other);
+
 	inline size_t get_N() const noexcept { return _N; };
 
 	TriangleMatrix<vec_type>& operator=(const TriangleMatrix<vec_type>& other)noexcept { MathVector<MathVector<vec_type>>::operator=(other); _N = other._N; return(*this); }
 	TriangleMatrix<vec_type>& operator=(TriangleMatrix<vec_type>&& other)noexcept { MathVector<MathVector<vec_type>>::operator=(std::move(other)); _N = other._N; other._N = 0; return(*this); }
 	TriangleMatrix<vec_type>& operator *=(const TriangleMatrix<vec_type>& other);
 	TriangleMatrix<vec_type> operator*(const TriangleMatrix<vec_type>& other)const;
+	//TriangleMatrix<vec_type>& operator+=(const TriangleMatrix<vec_type>& other) { MathVector<MathVector<vec_type>>::operator+=(other); }
+	//TriangleMatrix<vec_type> operator+(const TriangleMatrix<vec_type>& other) { MathVector<MathVector<vec_type>>::operator+(other); }
 
 	friend std::ostream& operator<< (std::ostream& out, const TriangleMatrix<vec_type> m1) {
 		for (int i = 0; i < m1.get_N(); i++) {
@@ -35,6 +39,18 @@ public:
 		return(out);
 	}
 };
+template<typename vec_type>
+TriangleMatrix<vec_type>::TriangleMatrix(const MathVector<MathVector<vec_type>>& other) :MathVector<MathVector<vec_type>>(other) {
+	if (other.size() <= 0 || other[0].size() <= 0)
+		throw std::logic_error("wrong math vec");
+	int tmp = other[0].size();
+	for (int i = 0; i < other.size(); i++) {
+		if (other[i].size() != (tmp+i)) {
+			throw std::logic_error("wrong math vec");
+		}
+	}
+	_N = other.size();
+}
 template<typename vec_type>
 MathVector<vec_type> TriangleMatrix<vec_type>::pillar_to_mathvector(size_t number_of_pillar)const{
 	if (number_of_pillar >= _N)

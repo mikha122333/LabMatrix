@@ -12,6 +12,8 @@ public:
 	Matrix(std::initializer_list<std::initializer_list<vec_type>> data);
 	Matrix(const Matrix& other) :MathVector<MathVector<vec_type>>(other) { _N = other._N; _M = other._M; }
 
+	Matrix(const MathVector<MathVector<vec_type>>& other);
+
 	~Matrix() = default;
 
 	inline size_t get_N() const noexcept{ return _N; }
@@ -60,6 +62,19 @@ Matrix<vec_type>::Matrix(size_t N, size_t M, vec_type** data):MathVector<MathVec
 			(*this)[i][i2] = data[i][i2];
 		}
 	}
+}
+template<typename vec_type>
+Matrix<vec_type>::Matrix(const MathVector<MathVector<vec_type>>& other) :MathVector<MathVector<vec_type>>(other) {
+	if (other.size() <= 0 || other[0].size() <= 0)
+		throw std::logic_error("wrong math vec");
+	int tmp = other[0].size();
+	for (int i = 0; i < other.size(); i++) {
+		if (other[i].size() != tmp) {
+			throw std::logic_error("wrong math vec");
+		}
+	}
+	_N = other.size();
+	_M = other.operator[](0).size();
 }
 template<typename vec_type>
 Matrix<vec_type> Matrix<vec_type>::Transposition()const noexcept {
