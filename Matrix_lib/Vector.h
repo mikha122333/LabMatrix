@@ -9,12 +9,11 @@ class Vector {
 	size_t _back;         // индекс последнего элемента
 	size_t i_to_ri(size_t) const;
 public:
-	Vector(size_t size = 0);                 // конструктор по размеру + по умолчанию
 	Vector(std::initializer_list<vec_type>);   // конструктор по списку инициализации
-	Vector(vec_type*, size_t);                 // конструктор инициализации
+	Vector(size_t size=0, const vec_type* data=nullptr);
 	Vector(const Vector<vec_type>&);                   // конструктор копирования
 	Vector(Vector<vec_type>&&);                        // конструктор с move-семантикой
-	~Vector() = default;                     // деструктор
+	virtual ~Vector() = default;                     // деструктор
 
 	inline bool is_empty() const noexcept;          // проверка на пустоту
 	inline bool is_full() const noexcept;           // проверка на переполнение
@@ -41,8 +40,8 @@ public:
 	Vector<vec_type>& operator=(const Vector<vec_type>&) noexcept;      // оператор присваивания
 	Vector<vec_type>& operator=(Vector<vec_type>&&) noexcept;           // оператор присваивания с move-семантикой
 
-	vec_type operator[](size_t) const noexcept;       // оператор обращения по индексу константный
-	vec_type& operator[](size_t) noexcept;            // оператор обращения по индексу
+	vec_type operator[](size_t) const;       // оператор обращения по индексу константный
+	vec_type& operator[](size_t) ;            // оператор обращения по индексу
 
 	friend std::ostream& operator<< (std::ostream& out, const Vector<vec_type>& v1) {
 		out << "{ ";
@@ -67,6 +66,8 @@ public:
 	};          // ввод
 	friend void shake(Vector<vec_type>&);
 	friend void sort_g(Vector<vec_type>&);
+
+	void shrink_to_fit() noexcept;
 };
 template<typename vec_type>
 inline bool Vector<vec_type>::is_empty() const noexcept { return _mem.is_empty(); }
@@ -105,16 +106,16 @@ template<typename vec_type>
 size_t Vector<vec_type>::i_to_ri(size_t i) const {
 	return ((i + _front) % _mem._capacity);
 }
-template<typename vec_type>
-Vector<vec_type>::Vector(size_t size) {
-	MemData<vec_type> tmp(size);
-	_mem = std::move(tmp);
-	_front = 0;
-	if (size > 0)
-		_back = size - 1;
-	else
-		_back = 0;
-}
+//template<typename vec_type>
+//Vector<vec_type>::Vector(size_t size) {
+//	MemData<vec_type> tmp(size);
+//	_mem = std::move(tmp);
+//	_front = 0;
+//	if (size > 0)
+//		_back = size - 1;
+//	else
+//		_back = 0;
+//}
 template<typename vec_type>
 Vector<vec_type>::Vector(std::initializer_list<vec_type> li) {
 	MemData<vec_type> tmp(li);
@@ -126,8 +127,8 @@ Vector<vec_type>::Vector(std::initializer_list<vec_type> li) {
 		_back = 0;
 }
 template<typename vec_type>
-Vector<vec_type>::Vector(vec_type* li, size_t size) {
-	MemData<vec_type> tmp(li, size);
+Vector<vec_type>::Vector(size_t size, const vec_type* data) {
+	MemData<vec_type> tmp(size, data);
 	_mem = (std::move(tmp));
 	_front = 0;
 	if (_mem._size > 0)
@@ -149,56 +150,37 @@ Vector<vec_type>::Vector(Vector<vec_type>&& v1) {
 	_back = v1._back;
 	v1._back = 0;
 }
-//template<typename vec_type>
-//std::ostream& operator<<(std::ostream& out, const Vector<vec_type>& v1) {
-//	out << "{ ";
-//	if (v1._mem.size() != 0) {
-//		out << v1._mem.data()[v1._front];
-//	}
-//	for (size_t i = 1; i < v1._mem.size(); i++) {
-//		out << ", " << v1._mem.data()[v1.i_to_ri(i)];
-//	}
-//	out << " }";
-//	return out;
-//}
 template<typename vec_type>
 Vector<vec_type>& Vector<vec_type>::operator=(const Vector<vec_type>& v1) noexcept {
-	_mem = v1._mem;
-	_front = v1._front;
-	_back = v1._back;
+	if (this != &v1) {
+		_mem = v1._mem;
+		_front = v1._front;
+		_back = v1._back;
+	}
 	return(*this);
 }
 template<typename vec_type>
 Vector<vec_type>& Vector<vec_type>::operator=(Vector<vec_type>&& v1) noexcept {
-	_mem = std::move(v1._mem);
-	_front = v1._front;
-	v1._front = 0;
-	_back = v1._back;
-	v1._back = 0;
+	if (this != &v1) {
+		_mem = std::move(v1._mem);
+		_front = v1._front;
+		v1._front = 0;
+		_back = v1._back;
+		v1._back = 0;
+	}
 	return(*this);
 }
-//template<typename vec_type>
-//std::istream& operator>>(std::istream& in, Vector<vec_type>& v1) {
-//	Vector<vec_type> tmp;
-//	vec_type ch;
-//	in >> ch;
-//	while (in >> ch) {
-//		tmp.push_back(ch);
-//	}
-//	v1 = std::move(tmp);
-//	return in;
-//}
 template<typename vec_type>
 void Vector<vec_type>::push_front(vec_type ch) noexcept {
 	this->_mem._size++;
 	if (this->_mem._size > 1)
 		this->_front = (_front - 1 + _mem._capacity) % _mem._capacity;
-	_mem._data[_front] = ch;
 	if ((*this).is_full()) {
 		_mem.reset_memory(_mem._size);
 		_front = 0;
 		_back = _mem._size - 1;
 	}
+	_mem._data[_front] = ch;
 }
 template<typename vec_type>
 void Vector<vec_type>::push_front_some(vec_type* ch, size_t size) noexcept {
@@ -227,12 +209,12 @@ void Vector<vec_type>::push_back(vec_type ch) noexcept {
 	this->_mem._size++;
 	if (this->_mem._size > 1)
 		this->_back = (_back + 1) % _mem._capacity;
-	_mem._data[_back] = ch;
 	if ((*this).is_full()) {
 		_mem.reset_memory(_mem._size);
 		_front = 0;
 		_back = _mem._size - 1;
 	}
+	_mem._data[_back] = ch;
 }
 template<typename vec_type>
 void Vector<vec_type>::push_back_some(vec_type* ch, size_t size) noexcept {
@@ -257,13 +239,13 @@ void Vector<vec_type>::pop_back() {
 	}
 }
 template<typename vec_type>
-vec_type Vector<vec_type>::operator[](size_t i) const noexcept {
+vec_type Vector<vec_type>::operator[](size_t i) const  {
 	if (i < this->_mem._size)
 		return this->_mem._data[(*this).i_to_ri(i)];
 	else throw std::logic_error("i go out of range");
 }
 template<typename vec_type>
-vec_type& Vector<vec_type>::operator[](size_t i) noexcept {
+vec_type& Vector<vec_type>::operator[](size_t i)  {
 	if (i < this->_mem._size)
 		return this->_mem._data[(*this).i_to_ri(i)];
 	else throw std::logic_error("i go out of range");
@@ -367,4 +349,10 @@ void sort_g(Vector<vec_type>& v1) {
 		v1[i] = v1[max_i];
 		v1[max_i] = tmp;
 	}
+}
+template<typename vec_type>
+void Vector<vec_type>::shrink_to_fit()noexcept {
+	this->_mem.shrink_to_fit(_front);
+	_front = 0;
+	_back = _mem._size - 1;
 }

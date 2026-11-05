@@ -124,6 +124,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Memdata.h" />
+    <ClInclude Include="TMathVector.h" />
+    <ClInclude Include="TMatrix.h" />
+    <ClInclude Include="TTriangleMatrix.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>

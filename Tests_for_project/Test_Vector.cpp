@@ -24,7 +24,7 @@ TEST(ClassMemData, can_create_with_init_constructor) {
     double* a = new double[2];
     a[0] = 55;
     a[1] = 66;
-    MemData<double> m1(a, 2);
+    MemData<double> m1(2,a);
     EXPECT_EQ(m1.capacity(), 2 + MEM_STEP - 1);
     EXPECT_EQ(m1.size(), 2);
     EXPECT_DOUBLE_EQ(m1.data()[0], 55);
@@ -169,7 +169,7 @@ TEST(ClassVector, can_create_with_init_constructor) {
     s[0] = 55;
     s[1] = 66;
     s[2] = 77;
-    Vector<double> v1(s, 3);
+    Vector<double> v1(3,s);
     EXPECT_DOUBLE_EQ(v1.front(), 55);
     EXPECT_DOUBLE_EQ(v1.back(), 77);
     EXPECT_EQ(v1.size(), 3);
@@ -514,7 +514,7 @@ TEST(ClassVector, can_add_front_some) {
     for (int i = 0; i < 4; i++) {
         d[i] = i + 1;
     }
-    Vector<double> v1(d, 4);
+    Vector<double> v1(4,d);
     for (int i = 0; i < 4; i++) {
         d[i] = d[i] + 1;
     }
@@ -529,7 +529,7 @@ TEST(ClassVector, can_add_back_some) {
     for (int i = 0; i < 4; i++) {
         d[i] = i + 1;
     }
-    Vector<double> v1(d, 4);
+    Vector<double> v1(4,d);
     for (int i = 0; i < 4; i++) {
         d[i] = d[i] + 1 + i;
     }
@@ -550,7 +550,7 @@ TEST(ClassVector, can_insert_some) {
     for (int i = 0; i < 3; i++) {
         d[i] = i + 1;
     }
-    Vector<double> v1(d, 3);
+    Vector<double> v1(3,d);
     for (int i = 0; i < 3; i++) {
         d[i] = d[i] + 1 + i;
     }
@@ -589,6 +589,54 @@ TEST(ClassVector, can_shake) {
     sort_g<double>(v1);
     for (int i = 0; i < 6; i++) {
         EXPECT_DOUBLE_EQ(v1[i], 6 - i);
+    }
+}
+#endif
+#ifdef VECTOR_CAPACITY_TEST
+#include "Vector.h"
+TEST(vec_cap, is_size_equal_capacity) {
+    Vector<int> v1({ 1,2,3 });
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 3);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_EQ(v1[i], i + 1);
+    }
+}
+TEST(vec_cap, is_size_equal_capacity_after_add) {
+    Vector<int> v1({ 1,2 });
+    v1.push_back(3);
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 3);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_EQ(v1[i], i + 1);
+    }
+}
+TEST(vec_cap, is_size_equal_capacity_after_pop) {
+    Vector<int> v1({ 1,2,3,4 });
+    v1.pop_back();
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 3);
+    for (int i = 0; i < 3; i++) {
+        EXPECT_EQ(v1[i], i + 1);
+    }
+}
+TEST(vec_cap, is_size_equal_capacity_after_using_circle_container) {
+    Vector<int> v1({ 1});
+    for (int i = 0; i < 5; i++) {
+        v1.push_back(i + 2);
+        v1.pop_front();
+    }
+    for (int i = 0; i < 13;i++) {
+        v1.push_back(7 + i);
+    }
+    v1.shrink_to_fit();
+    EXPECT_EQ(v1.capacity(), v1.size());
+    EXPECT_EQ(v1.capacity(), 14);
+    for (int i = 0; i < 14; i++) {
+        EXPECT_EQ(v1[i], i + 6);
     }
 }
 #endif
