@@ -9,10 +9,8 @@ class Vector {
 	size_t _back;         // индекс последнего элемента
 	size_t i_to_ri(size_t) const;
 public:
-	//Vector(size_t size = 0);                 // конструктор по размеру + по умолчанию
 	Vector(std::initializer_list<vec_type>);   // конструктор по списку инициализации
 	Vector(size_t size=0, const vec_type* data=nullptr);
-	//Vector(vec_type*, size_t);                 // конструктор инициализации
 	Vector(const Vector<vec_type>&);                   // конструктор копирования
 	Vector(Vector<vec_type>&&);                        // конструктор с move-семантикой
 	virtual ~Vector() = default;                     // деструктор
@@ -138,15 +136,6 @@ Vector<vec_type>::Vector(size_t size, const vec_type* data) {
 	else
 		_back = 0;
 }
-//Vector<vec_type>::Vector(vec_type* li, size_t size) {
-//	MemData<vec_type> tmp(li, size);
-//	_mem = (std::move(tmp));
-//	_front = 0;
-//	if (_mem._size > 0)
-//		_back = _mem._size - 1;
-//	else
-//		_back = 0;
-//}
 template<typename vec_type>
 Vector<vec_type>::Vector(const Vector<vec_type>& v1) {
 	_mem = v1._mem;
@@ -161,18 +150,6 @@ Vector<vec_type>::Vector(Vector<vec_type>&& v1) {
 	_back = v1._back;
 	v1._back = 0;
 }
-//template<typename vec_type>
-//std::ostream& operator<<(std::ostream& out, const Vector<vec_type>& v1) {
-//	out << "{ ";
-//	if (v1._mem.size() != 0) {
-//		out << v1._mem.data()[v1._front];
-//	}
-//	for (size_t i = 1; i < v1._mem.size(); i++) {
-//		out << ", " << v1._mem.data()[v1.i_to_ri(i)];
-//	}
-//	out << " }";
-//	return out;
-//}
 template<typename vec_type>
 Vector<vec_type>& Vector<vec_type>::operator=(const Vector<vec_type>& v1) noexcept {
 	if (this != &v1) {
@@ -193,23 +170,11 @@ Vector<vec_type>& Vector<vec_type>::operator=(Vector<vec_type>&& v1) noexcept {
 	}
 	return(*this);
 }
-//template<typename vec_type>
-//std::istream& operator>>(std::istream& in, Vector<vec_type>& v1) {
-//	Vector<vec_type> tmp;
-//	vec_type ch;
-//	in >> ch;
-//	while (in >> ch) {
-//		tmp.push_back(ch);
-//	}
-//	v1 = std::move(tmp);
-//	return in;
-//}
 template<typename vec_type>
 void Vector<vec_type>::push_front(vec_type ch) noexcept {
 	this->_mem._size++;
 	if (this->_mem._size > 1)
 		this->_front = (_front - 1 + _mem._capacity) % _mem._capacity;
-	//_mem._data[_front] = ch;
 	if ((*this).is_full()) {
 		_mem.reset_memory(_mem._size);
 		_front = 0;
@@ -244,7 +209,6 @@ void Vector<vec_type>::push_back(vec_type ch) noexcept {
 	this->_mem._size++;
 	if (this->_mem._size > 1)
 		this->_back = (_back + 1) % _mem._capacity;
-	//_mem._data[_back] = ch;
 	if ((*this).is_full()) {
 		_mem.reset_memory(_mem._size);
 		_front = 0;

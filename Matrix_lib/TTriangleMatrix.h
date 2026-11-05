@@ -4,8 +4,8 @@ template<typename vec_type>
 class TriangleMatrix :public MathVector< MathVector<vec_type>> {
 protected:
 	size_t _N;
-	MathVector<vec_type> pillar_to_mathvector(size_t number_of_pillar)const;
-	MathVector<vec_type> line_to_full_mathvector(size_t number_of_line)const;
+	MathVector<vec_type> pillar_to_mathvector(size_t number_of_pillar, size_t start_in, size_t end_in)const;
+	MathVector<vec_type> line_to_full_mathvector(size_t number_of_line,size_t start_in,size_t end_in)const;
 public:
 	TriangleMatrix() :MathVector<MathVector<vec_type>>() { _N = 0; };
 	TriangleMatrix(size_t N, vec_type** data=nullptr);
@@ -20,8 +20,6 @@ public:
 	TriangleMatrix<vec_type>& operator=(TriangleMatrix<vec_type>&& other)noexcept { MathVector<MathVector<vec_type>>::operator=(std::move(other)); _N = other._N; other._N = 0; return(*this); }
 	TriangleMatrix<vec_type>& operator *=(const TriangleMatrix<vec_type>& other);
 	TriangleMatrix<vec_type> operator*(const TriangleMatrix<vec_type>& other)const;
-	//TriangleMatrix<vec_type>& operator+=(const TriangleMatrix<vec_type>& other) { MathVector<MathVector<vec_type>>::operator+=(other); }
-	//TriangleMatrix<vec_type> operator+(const TriangleMatrix<vec_type>& other) { MathVector<MathVector<vec_type>>::operator+(other); }
 
 	friend std::ostream& operator<< (std::ostream& out, const TriangleMatrix<vec_type> m1) {
 		for (int i = 0; i < m1.get_N(); i++) {
@@ -52,13 +50,13 @@ TriangleMatrix<vec_type>::TriangleMatrix(const MathVector<MathVector<vec_type>>&
 	_N = other.size();
 }
 template<typename vec_type>
-MathVector<vec_type> TriangleMatrix<vec_type>::pillar_to_mathvector(size_t number_of_pillar)const{
-	if (number_of_pillar >= _N)
+MathVector<vec_type> TriangleMatrix<vec_type>::pillar_to_mathvector(size_t number_of_pillar, size_t start_in, size_t end_in)const{
+	if (number_of_pillar >= _N || (end_in - start_in + 1) > _N || (end_in - start_in + 1) <= 0 || end_in >= _N)
 		throw std::out_of_range("num_of_pil is out of range");
-	MathVector<vec_type> res(_N);
-	for (int i = 0; i < _N; i++) {
+	MathVector<vec_type> res(end_in-start_in+1);
+	for (int i = 0; i < end_in-start_in+1; i++) {
 		try {
-			res[i] = (*this)[i][number_of_pillar];
+			res[i] = (*this)[i+start_in][number_of_pillar];
 		}
 		catch (...) {
 			res[i]= vec_type{};
@@ -67,13 +65,13 @@ MathVector<vec_type> TriangleMatrix<vec_type>::pillar_to_mathvector(size_t numbe
 	return res;
 }
 template<typename vec_type>
-MathVector<vec_type> TriangleMatrix<vec_type>::line_to_full_mathvector(size_t number_of_line)const {
-	if (number_of_line >= _N)
+MathVector<vec_type> TriangleMatrix<vec_type>::line_to_full_mathvector(size_t number_of_line, size_t start_in, size_t end_in)const {
+	if (number_of_line >= _N || (end_in-start_in+1)>_N || (end_in - start_in + 1)<=0||end_in>=_N)
 		throw std::out_of_range("num_of_pil is out of range");
-	MathVector<vec_type> res(_N);
-	for (int i = 0; i < _N; i++) {
+	MathVector<vec_type> res(end_in-start_in+1);
+	for (int i = 0; i < end_in-start_in+1; i++) {
 		try {
-			res[i] = (*this)[number_of_line][i];
+			res[i] = (*this)[number_of_line][i+start_in];
 		}
 		catch (...) {
 			res[i] = vec_type{};
@@ -109,12 +107,11 @@ TriangleMatrix<vec_type>& TriangleMatrix<vec_type>::operator *=(const TriangleMa
 	if (_N != other._N)
 		throw std::logic_error("trying *= trimat with diff size");
 	TriangleMatrix<vec_type> res(_N);
-	MathVector<vec_type> tmp_line(_N);
+	size_t start_in, end_in;
 	for (int i = 0; i < _N; i++) {
 		vec_type* tmp_data=new vec_type[i + 1];
-		tmp_line = (this->line_to_full_mathvector(i));
 		for (int i2 = 0; i2 <= i; i2++) {
-			tmp_data[i2] = tmp_line * other.pillar_to_mathvector(i2);
+			tmp_data[i2] = (this->line_to_full_mathvector(i, i2, i)) * other.pillar_to_mathvector(i2,i2,i);
 		}
 		res[i] = std::move(MathVector<vec_type>(i + 1, tmp_data));
 		delete[] tmp_data;

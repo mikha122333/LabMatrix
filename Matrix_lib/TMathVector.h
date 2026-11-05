@@ -73,27 +73,20 @@ MathVector<vec_type>& MathVector<vec_type>:: operator =(MathVector<vec_type>&& o
 }
 template<typename vec_type>
 MathVector<vec_type>& MathVector<vec_type>::operator +=(const MathVector<vec_type>& other) {
-	if (this->size() == other.size()) {
+	if (this->size() != other.size()) throw std::logic_error("different sizes trying +=");
 		for (int i = 0; i < this->size(); i++) {
 			this->operator[](i) += other.operator[](i);
 		}
 		return (*this);
-	}
-	else {
-		throw std::logic_error("different sizes trying +=");
-	}
 }
 template<typename vec_type>
 MathVector<vec_type>& MathVector<vec_type>::operator -=(const MathVector<vec_type>& other) {
-	if (this->size() == other.size()) {
-		for (int i = 0; i < this->size(); i++) {
-			this->operator[](i) -= other.operator[](i);
-		}
-		return (*this);
+	if(this->size()!=other.size()) throw std::logic_error("different sizes trying -=");
+	for (int i = 0; i < this->size(); i++) {
+		this->operator[](i) -= other.operator[](i);
 	}
-	else {
-		throw std::logic_error("different sizes trying -=");
-	}
+	return (*this);
+	
 }
 template<typename vec_type>
 MathVector<vec_type>& MathVector<vec_type>::operator *=(double val) {
@@ -116,16 +109,12 @@ MathVector<vec_type> MathVector<vec_type>::operator -(const MathVector<vec_type>
 }
 template<typename vec_type>
 vec_type MathVector<vec_type>::operator *(const MathVector<vec_type>& other)const {
-	if (this->size() == other.size()) {
-		vec_type res{};
-		for (int i = 0; i < this->size(); i++) {
-			res =res+ this->operator[](i) * other.operator[](i);
-		}
-		return (res);
+	if (this->size() != other.size()) throw std::logic_error("different sizes trying *");
+	vec_type res{};
+	for (int i = 0; i < this->size(); i++) {
+		res =res+ this->operator[](i) * other.operator[](i);
 	}
-	else {
-		throw std::logic_error("different sizes trying *");
-	}
+	return (res);
 }
 template<typename vec_type>
 MathVector<vec_type> MathVector<vec_type>::operator *(double val)const {

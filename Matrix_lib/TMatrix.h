@@ -56,7 +56,6 @@ Matrix<vec_type>::Matrix(size_t N, size_t M, vec_type** data):MathVector<MathVec
 	_N = N;
 	_M = M;
 	for (int i = 0; i < _N; i++) {
-		//delete[]((*this)[i]);
 		(*this)[i] = MathVector<vec_type>(M);
 		for (int i2 = 0; i2 < _M&&(data!=nullptr); i2++) {
 			(*this)[i][i2] = data[i][i2];
